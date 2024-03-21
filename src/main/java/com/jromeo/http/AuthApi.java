@@ -17,7 +17,7 @@ public class AuthApi {
     private String jwtToken;
 
     //FUNKAR
-    public void login(AuthDto dto) {
+    public boolean login(AuthDto dto) {
         Gson gson = new Gson();
         String json = gson.toJson(dto);
 
@@ -32,19 +32,25 @@ public class AuthApi {
             HttpResponse<String> response = client.send(post, HttpResponse.BodyHandlers.ofString());
             TokenDto jwtToken = gson.fromJson(response.body(), TokenDto.class);
             this.jwtToken = jwtToken.getAccess_token();
-
+            if (response.statusCode() == 200) {
+                return true;
+            }
             if (response.statusCode() != 200) {
                 throw new RuntimeException("Failed : HTTP error code : " + response.statusCode());
+
             }
 
 
         } catch (Exception e) {
             System.out.println("Error when logging in");
+
         }
+        return false;
     }
 
+
     // FUNKAR
-    public void register(AuthDto dto) {
+    public boolean register(AuthDto dto) {
         Gson gson = new Gson();
         String json = gson.toJson(dto);
 
@@ -56,8 +62,17 @@ public class AuthApi {
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
 
+            HttpResponse<String> response = client.send(post, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                return true;
+            } else {
+                throw new RuntimeException("Failed : HTTP error code : " + response.statusCode());
+            }
         } catch (Exception e) {
-            System.out.println("Error with token");
+            System.out.println("Error with token: " + e.getMessage());
+            return false;
         }
     }
 }
+
