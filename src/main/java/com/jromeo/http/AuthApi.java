@@ -50,7 +50,7 @@ public class AuthApi {
 
 
     // FUNKAR
-    public boolean register(AuthDto dto) {
+    public void register(AuthDto dto) {
         Gson gson = new Gson();
         String json = gson.toJson(dto);
 
@@ -65,13 +65,13 @@ public class AuthApi {
             HttpResponse<String> response = client.send(post, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
-                return true;
+
             } else {
                 throw new RuntimeException("Failed : HTTP error code : " + response.statusCode());
             }
         } catch (Exception e) {
             System.out.println("Error with token: " + e.getMessage());
-            return false;
+
         }
     }
 }

@@ -70,7 +70,7 @@ public class AdminApi {
     }
 
     // Update Course
-    public void updateCourse(String token, long id, String json) {
+    public void updateCourse(String token, long id,String json) {
         HttpResponse<String> response = httpHelper.sendPutRequest("/course/update/" + id, json, token);
         boolean isSuccess = response.statusCode() > 199 || response.statusCode() < 300;
         if (!isSuccess) {
@@ -86,4 +86,6 @@ public class AdminApi {
             throw new RuntimeException("Failed : HTTP error code : " + response.statusCode());
         }
     }
+
+
 }
