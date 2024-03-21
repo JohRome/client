@@ -5,6 +5,25 @@ import java.net.http.HttpResponse;
 public class AdminApi {
     private HttpHelper httpHelper;
 
+    // Get one student
+    public void getStudent(String token, long id) {
+        HttpResponse<String> response = httpHelper.sendGetRequest("/student/getStudent" + id, token);
+
+        boolean isSuccess = response.statusCode() > 199 || response.statusCode() < 300;
+        if (!isSuccess) {
+            throw new RuntimeException("Failed : HTTP error code : " + response.statusCode());
+        }
+    }
+
+    // Get all Students
+    public void getAllStudents(String token) {
+        HttpResponse<String> response = httpHelper.sendGetRequest("/student/getStudents", token);
+        boolean isSuccess = response.statusCode() > 199 || response.statusCode() < 300;
+        if (!isSuccess) {
+            throw new RuntimeException("Failed : HTTP error code : " + response.statusCode());
+        }
+    }
+
     // Delete User
     public void deleteUserAsAdmin(String token, String userEmail) {
         HttpResponse<String> response = httpHelper.sendDeleteRequest("/users/delete/" + userEmail, token);
