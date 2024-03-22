@@ -1,5 +1,7 @@
 package com.jromeo.http;
 
+import lombok.Getter;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -8,6 +10,7 @@ import java.net.http.HttpResponse;
 public class HttpHelper {
 
     private String baseUrl = "http://school-mangement.eu-north-1.elasticbeanstalk.com:8080";
+    @Getter
     private HttpClient httpClient;
 
     public HttpHelper() {
@@ -24,7 +27,7 @@ public class HttpHelper {
                     .build();
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("Failed to send POST request");
         }
     }
 
@@ -37,7 +40,7 @@ public class HttpHelper {
                     .build();
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("Failed to send GET request");
         }
     }
 
@@ -51,7 +54,7 @@ public class HttpHelper {
                     .build();
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("Failed to send PUT request");
         }
     }
 
@@ -65,7 +68,7 @@ public class HttpHelper {
                     .build();
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("Failed to send PATCH request");
         }
     }
 
@@ -79,7 +82,7 @@ public class HttpHelper {
                     .build();
             return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException("Failed to send DELETE request");
         }
     }
 }
