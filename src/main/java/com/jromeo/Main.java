@@ -129,7 +129,7 @@ public class Main {
         switch (option) {
             case 1:
                 // Perform action for Get Student Details
-                StudentDto student = adminApi.getStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
+                StudentDto student = studentApi.getStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
                 System.out.println(student.toString());
                 break;
             case 2:
@@ -163,7 +163,7 @@ public class Main {
     }
 
     private static void printAllStudents(String jwt) {
-        List<StudentDto> students = adminApi.getAllStudents(jwt);
+        List<StudentDto> students = studentApi.getAllStudents(jwt);
         for (StudentDto studentDto : students) {
             System.out.println(studentDto);
         }
@@ -208,12 +208,12 @@ public class Main {
                 jsonObject.addProperty("dept", InputScanner.stringPut("Enter updated student department: "));
                 String json = updateStudent.toJson(jsonObject);
 
-                adminApi.updateStudent(authApi.getJwtToken(), id , json);
+                studentApi.updateStudent(authApi.getJwtToken(), id , json);
                 break;
             case 4:
                 // Perform action for Delete Student
                 printAllStudents(authApi.getJwtToken());
-                adminApi.deleteStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
+                studentApi.deleteStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
                 break;
             case 5:
                 // Perform action for Add Course
@@ -229,10 +229,11 @@ public class Main {
                 break;
             case 6:
                 // Perform action for Update Course
-                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
-                for (CourseDto courseDto : courses) {
-                    System.out.println(courseDto);
-                }
+//                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
+//                for (CourseDto courseDto : courses) {
+//                    System.out.println(courseDto);
+//                }
+                printAllCourses(authApi.getJwtToken());
                 int courseId = InputScanner.intPut("Enter ID of the Course you want to update: ");
                 // Creating JSON object manually
                 Gson gson = new Gson();
