@@ -3,16 +3,45 @@ package com.jromeo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.jromeo.dto.AuthDto;
-import com.jromeo.http.AdminApi;
-import com.jromeo.http.AuthApi;
+import com.jromeo.dto.CourseDto;
+import com.jromeo.dto.StudentDto;
+import com.jromeo.http.*;
 import com.jromeo.utils.InputScanner;
 import com.jromeo.utils.Menu;
 
+import java.util.List;
+
 public class Main {
 
-
-    static AdminApi adminApi = new AdminApi();
+    static HttpHelper httpHelper = new HttpHelper();
+    static AdminApi adminApi = new AdminApi(httpHelper);
+    static CourseApi courseApi = new CourseApi(httpHelper);
+    static StudentApi studentApi = new StudentApi(httpHelper);
     static AuthApi authApi = new AuthApi();
+
+    /**
+     * RörigAB Dokumentation - Metoder vi har som fungerar
+     * Register User - Funkar
+     * Login again and update the token - funkar
+     * Get student details - funkar
+     * Get all students - funkar
+     * Get course by ID - funkar
+     * Get all courses - funkar
+     * Delete User - ej provat
+     * Convert User to Admin - ej provat
+     * Update Student - funkar
+     * Delete Student - funkar
+     * Add Course - funkar
+     * Update Course - funkar
+     * Delete Course - funkar men kan inte ta bort om det finns kopplade studenter
+     * Update User - ej provat - måste ha url
+     * Change Password - ej provat
+     * Add Student - funkar
+     * Assign Course to Student - funkar
+     *
+     * Metoder som fungerar = 11
+     * Metoder som ej provats = 4
+     */
 
     public static void main(String[] args) {
         // Welcome message
@@ -92,15 +121,27 @@ public class Main {
         switch (option) {
             case 1:
                 // Perform action for Get Student Details
+                StudentDto student = adminApi.getStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
+                System.out.println(student.toString());
                 break;
             case 2:
                 // Perform action for Get All Students
+                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
+                for (StudentDto studentDto : students) {
+                    System.out.println(studentDto);
+                }
                 break;
             case 3:
                 // Perform action for Get Course by ID
+                CourseDto course = courseApi.getCourseById(authApi.getJwtToken(), InputScanner.intPut("Enter course ID: "));
+                System.out.println(course);
                 break;
             case 4:
                 // Perform action for Get All Courses
+                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
+                for (CourseDto courseDto : courses) {
+                    System.out.println(courseDto);
+                }
                 break;
             case 0:
                 System.out.println("Exiting program.");
@@ -116,6 +157,7 @@ public class Main {
         switch (option) {
             case 1:
                 // Perform action for Delete User
+                // MÅSTE HITTA GET USERS FÖRST
                 adminApi.deleteUserAsAdmin(authApi.getJwtToken(),InputScanner.stringPut("Enter email of the user you want to delete: "));
                 break;
             case 2:
@@ -124,6 +166,10 @@ public class Main {
                 break;
             case 3:
                 // Perform action for Update Student
+                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
+                for (StudentDto studentDto : students) {
+                    System.out.println(studentDto);
+                }
                 int id = InputScanner.intPut("Enter ID of the Student you want to update: ");
                 Gson updateStudent = new Gson();
 
@@ -149,14 +195,30 @@ public class Main {
                 jsonObject1.addProperty("modules",InputScanner.stringPut("Enter course modules"));
                 jsonObject1.addProperty("fee",InputScanner.doublePut("Enter course fee: "));
                 String jsonCourse = addCourse.toJson(jsonObject1);
-                adminApi.addCourse(authApi.getJwtToken(), jsonCourse);
+                courseApi.addCourse(authApi.getJwtToken(), jsonCourse);
 
                 break;
             case 6:
                 // Perform action for Update Course
+                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
+                for (CourseDto courseDto : courses) {
+                    System.out.println(courseDto);
+                }
+                int courseId = InputScanner.intPut("Enter ID of the Course you want to update: ");
+                // Creating JSON object manually
+                Gson gson = new Gson();
+                JsonObject courseObject = new JsonObject();
+                courseObject.addProperty("title",InputScanner.stringPut("Enter updated course title: ") );
+                courseObject.addProperty("abbreviation", InputScanner.stringPut("Enter updated Course abbreviation: "));
+                courseObject.addProperty("modules", InputScanner.intPut("Enter updated Course modules: "));
+                courseObject.addProperty("fee", InputScanner.doublePut("Enter updated Course fee: "));
+                String courseJson = gson.toJson(courseObject);
+
+                courseApi.updateCourse(authApi.getJwtToken(), courseId , courseJson);
                 break;
             case 7:
-                // Perform action for Delete Course
+                // Perform action for Delete Course;
+                courseApi.deleteCourse(authApi.getJwtToken(), InputScanner.intPut("Enter course ID: "));
                 break;
             case 0:
                 System.out.println("Exiting program.");
@@ -178,9 +240,30 @@ public class Main {
                 break;
             case 3:
                 // Perform action for Add Student
+                Gson student = new Gson();
+                System.out.println("Add new Student");
+                JsonObject studentJson = new JsonObject();
+                studentJson.addProperty("name", InputScanner.stringPut("Enter student name: "));
+                studentJson.addProperty("age", InputScanner.intPut("Enter student age: "));
+                studentJson.addProperty("dept", InputScanner.stringPut("Enter student department: "));
+                String studentJ = student.toJson(studentJson);
+                studentApi.addStudent(authApi.getJwtToken(), studentJ);
                 break;
             case 4:
                 // Perform action for Assign Course to Student
+                System.out.println("Which student do you want to assign a course to?");
+                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
+                for (StudentDto studentDto : students) {
+                    System.out.println(studentDto);
+                }
+                long studentId = InputScanner.intPut("Enter student ID: ");
+                System.out.println("Which course do you want to assign to the student?");
+                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
+                for (CourseDto courseDto : courses) {
+                    System.out.println(courseDto);
+                }
+                long courseId = InputScanner.intPut("Enter course ID: ");
+                studentApi.assignCourseToStudent(authApi.getJwtToken(), studentId, courseId);
                 break;
             case 0:
                 System.out.println("Exiting program.");

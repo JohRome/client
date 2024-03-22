@@ -30,19 +30,4 @@ public class UserApi {
             throw new RuntimeException("Failed : HTTP error code : " + putResponse.statusCode());
         }
     }
-
-    public void addStudent(String token, String json) {
-        HttpResponse<String> postResponse = httpHelper.sendPostRequest("/student/save", json, token);
-        if (postResponse.statusCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + postResponse.statusCode());
-        }
-    }
-    // /student/{stuId}/course/{courseId}
-
-    public void assignCourseToStudent(String token, int studentId, int courseId) {
-        HttpResponse<String> postResponse = httpHelper.sendPostRequest("/student/" + studentId + "/course/" + courseId, "", token);
-        if (postResponse.statusCode() != 200) {
-            throw new RuntimeException("Failed : HTTP error code : " + postResponse.statusCode());
-        }
-    }
 }
