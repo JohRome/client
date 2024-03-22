@@ -28,14 +28,14 @@ public class Main {
      * Get course by ID - funkar
      * Get all courses - funkar
      * Delete User - ej provat
-     * Convert User to Admin - ej provat
+     * Convert User to Admin - måste ha url.
      * Update Student - funkar
      * Delete Student - funkar
      * Add Course - funkar
      * Update Course - funkar
      * Delete Course - funkar men kan inte ta bort om det finns kopplade studenter
-     * Update User - ej provat - måste ha url
-     * Change Password - ej provat
+     * Update User - - måste ha url
+     * Change Password - måste ha url
      * Add Student - funkar
      * Assign Course to Student - funkar
      *
@@ -83,6 +83,10 @@ public class Main {
                 break;
         }
     }
+
+    /**
+     * AUTHENTICATION MENU AND RELATED METHODS
+     */
     private static void handleLoginOrRegister() {
         int switchChoice = InputScanner.intPut("Enter 1 to login, Enter 2 to register (and login with the registered account)");
         AuthDto loginCredentials = new AuthDto();
@@ -116,6 +120,10 @@ public class Main {
         }
     }
 
+    /**
+     * PUBLIC ACCESS MENU AND RELATED METHODS
+     */
+
     private static void handlePublicMenuChoice() {
         int option = InputScanner.intPut("Enter your choice: ");
         switch (option) {
@@ -126,10 +134,11 @@ public class Main {
                 break;
             case 2:
                 // Perform action for Get All Students
-                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
-                for (StudentDto studentDto : students) {
-                    System.out.println(studentDto);
-                }
+//                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
+//                for (StudentDto studentDto : students) {
+//                    System.out.println(studentDto);
+//                }
+                printAllStudents(authApi.getJwtToken());
                 break;
             case 3:
                 // Perform action for Get Course by ID
@@ -138,10 +147,11 @@ public class Main {
                 break;
             case 4:
                 // Perform action for Get All Courses
-                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
-                for (CourseDto courseDto : courses) {
-                    System.out.println(courseDto);
-                }
+//                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
+//                for (CourseDto courseDto : courses) {
+//                    System.out.println(courseDto);
+//                }
+                printAllCourses(authApi.getJwtToken());
                 break;
             case 0:
                 System.out.println("Exiting program.");
@@ -151,6 +161,23 @@ public class Main {
                 break;
         }
     }
+
+    private static void printAllStudents(String jwt) {
+        List<StudentDto> students = adminApi.getAllStudents(jwt);
+        for (StudentDto studentDto : students) {
+            System.out.println(studentDto);
+        }
+    }
+    private static void printAllCourses(String jwt) {
+        List<CourseDto> courses = courseApi.getAllCourses(jwt);
+        for (CourseDto courseDto : courses) {
+            System.out.println(courseDto);
+        }
+    }
+
+    /**
+     * ADMIN ACCESS MENU AND RELATED METHODS
+     */
 
     private static void handleAdminMenuChoice() {
         int option = InputScanner.intPut("Enter your choice: ");
@@ -166,10 +193,11 @@ public class Main {
                 break;
             case 3:
                 // Perform action for Update Student
-                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
-                for (StudentDto studentDto : students) {
-                    System.out.println(studentDto);
-                }
+//                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
+//                for (StudentDto studentDto : students) {
+//                    System.out.println(studentDto);
+//                }
+                printAllStudents(authApi.getJwtToken());
                 int id = InputScanner.intPut("Enter ID of the Student you want to update: ");
                 Gson updateStudent = new Gson();
 
@@ -184,6 +212,7 @@ public class Main {
                 break;
             case 4:
                 // Perform action for Delete Student
+                printAllStudents(authApi.getJwtToken());
                 adminApi.deleteStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
                 break;
             case 5:
@@ -218,6 +247,7 @@ public class Main {
                 break;
             case 7:
                 // Perform action for Delete Course;
+                printAllCourses(authApi.getJwtToken());
                 courseApi.deleteCourse(authApi.getJwtToken(), InputScanner.intPut("Enter course ID: "));
                 break;
             case 0:
@@ -228,6 +258,7 @@ public class Main {
                 break;
         }
     }
+
 
     private static void handleUserMenuChoice() {
         int option = InputScanner.intPut("Enter your choice: ");
@@ -252,16 +283,18 @@ public class Main {
             case 4:
                 // Perform action for Assign Course to Student
                 System.out.println("Which student do you want to assign a course to?");
-                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
-                for (StudentDto studentDto : students) {
-                    System.out.println(studentDto);
-                }
+//                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
+//                for (StudentDto studentDto : students) {
+//                    System.out.println(studentDto);
+//                }
+                printAllStudents(authApi.getJwtToken());
                 long studentId = InputScanner.intPut("Enter student ID: ");
                 System.out.println("Which course do you want to assign to the student?");
-                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
-                for (CourseDto courseDto : courses) {
-                    System.out.println(courseDto);
-                }
+//                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
+//                for (CourseDto courseDto : courses) {
+//                    System.out.println(courseDto);
+//                }
+                printAllCourses(authApi.getJwtToken());
                 long courseId = InputScanner.intPut("Enter course ID: ");
                 studentApi.assignCourseToStudent(authApi.getJwtToken(), studentId, courseId);
                 break;
