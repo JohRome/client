@@ -38,52 +38,69 @@ public class Main {
      * Change Password - måste ha url
      * Add Student - funkar
      * Assign Course to Student - funkar
-     *
+     * <p>
      * Metoder som fungerar = 11
      * Metoder som ej provats = 4
      */
 
     public static void main(String[] args) {
-
         // Welcome message
         System.out.println("Hello! Welcome to the program.");
 
-        // Ask the user if they want to login/register
-        String choice = InputScanner.stringPut("Would you like to login/register to access more features? (yes/no)").toLowerCase();
+        // Start an infinite loop to keep the program running
+        while (true) {
+            // Ask the user if they want to login/register
+            String choice = InputScanner.stringPut("Would you like to login/register to access more features? (yes/no)").toLowerCase();
 
-        // Display the appropriate menu based on the user's choice
-        if (choice.equals("yes")) {
-            handleLoginOrRegister();
-            MainMenu();
-        } else if (choice.equals("no")) {
-            Menu.DisplayPublicMenu();
-            handlePublicMenuChoice();
-        } else {
-            System.out.println("Invalid choice. Exiting program.");
-        }
-    }
-    public static void MainMenu() {
-
-        // Get user choice
-        int choice = InputScanner.intPut("Enter your choice: ");
-        switch (choice) {
-            case 1:
+            // Display the appropriate menu based on the user's choice
+            if (choice.equals("yes")) {
+                handleLoginOrRegister();
+            } else if (choice.equals("no")) {
                 Menu.DisplayPublicMenu();
                 handlePublicMenuChoice();
-                break;
-            case 2:
-                Menu.DisplayAdminMenu();
-                handleAdminMenuChoice();
-                break;
-            case 3:
-                Menu.DisplayUserMenu();
-                handleUserMenuChoice();
-                break;
-            default:
+            } else {
                 System.out.println("Invalid choice.");
-                break;
+                continue; // Restart the loop to prompt the user again
+            }
+
+            // Once login/register is done, enter the main menu loop
+            MainMenu();
+
+            // Break out of the loop if the user chooses to exit the program
+            break;
         }
     }
+
+
+    public static void MainMenu() {
+        while (true) {
+            Menu.MainMenu();
+            // Get user choice
+            int choice = InputScanner.intPut("Enter your choice: ");
+            switch (choice) {
+                case 1:
+                    Menu.DisplayPublicMenu();
+                    handlePublicMenuChoice();
+                    break;
+                case 2:
+                    Menu.DisplayAdminMenu();
+                    handleAdminMenuChoice();
+                    break;
+                case 3:
+                    Menu.DisplayUserMenu();
+                    handleUserMenuChoice();
+                    break;
+                case 0:
+                    System.out.println("Exiting program.");
+                    System.exit(0); // Exit the program when choice is 0
+                    break; // This break is not necessary, but added for clarity
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        }
+    }
+
 
     /**
      * AUTHENTICATION MENU AND RELATED METHODS
@@ -109,15 +126,15 @@ public class Main {
     private static void handleLogin(AuthDto loginCredentials) {
         boolean loggedIn = authApi.login(loginCredentials);
         if (loggedIn) {
-            Menu.MainMenu();
+            MainMenu();
         }
     }
 
     private static void handleRegister(AuthDto loginCredentials) {
-         authApi.register(loginCredentials);
-         boolean loggedIn = authApi.login(loginCredentials);
+        authApi.register(loginCredentials);
+        boolean loggedIn = authApi.login(loginCredentials);
         if (loggedIn) {
-            Menu.MainMenu();
+            MainMenu();
         }
     }
 
@@ -126,40 +143,37 @@ public class Main {
      */
 
     private static void handlePublicMenuChoice() {
-        int option = InputScanner.intPut("Enter your choice: ");
-        switch (option) {
-            case 1:
-                // Perform action for Get Student Details
-                StudentDto student = studentApi.getStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
-                System.out.println(student.toString());
-                break;
-            case 2:
-                // Perform action for Get All Students
-//                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
-//                for (StudentDto studentDto : students) {
-//                    System.out.println(studentDto);
-//                }
-                printAllStudents(authApi.getJwtToken());
-                break;
-            case 3:
-                // Perform action for Get Course by ID
-                CourseDto course = courseApi.getCourseById(authApi.getJwtToken(), InputScanner.intPut("Enter course ID: "));
-                System.out.println(course);
-                break;
-            case 4:
-                // Perform action for Get All Courses
-//                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
-//                for (CourseDto courseDto : courses) {
-//                    System.out.println(courseDto);
-//                }
-                printAllCourses(authApi.getJwtToken());
-                break;
-            case 0:
-                System.out.println("Exiting program.");
-                break;
-            default:
-                System.out.println("Invalid choice.");
-                break;
+        try {
+            int option = InputScanner.intPut("Enter your choice: ");
+            switch (option) {
+                case 1:
+                    // Perform action for Get Student Details
+                    StudentDto student = studentApi.getStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
+                    System.out.println(student.toString());
+                    break;
+                case 2:
+                    // Perform action for Get All Students
+                    printAllStudents(authApi.getJwtToken());
+                    break;
+                case 3:
+                    // Perform action for Get Course by ID
+                    CourseDto course = courseApi.getCourseById(authApi.getJwtToken(), InputScanner.intPut("Enter course ID: "));
+                    System.out.println(course);
+                    break;
+                case 4:
+                    // Perform action for Get All Courses
+                    printAllCourses(authApi.getJwtToken());
+                    break;
+                case 0:
+                    System.out.println("Exiting program.");
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+            // Optionally, you can log the error or perform additional error handling here
         }
     }
 
@@ -169,6 +183,7 @@ public class Main {
             System.out.println(studentDto);
         }
     }
+
     private static void printAllCourses(String jwt) {
         List<CourseDto> courses = courseApi.getAllCourses(jwt);
         for (CourseDto courseDto : courses) {
@@ -181,131 +196,141 @@ public class Main {
      */
 
     private static void handleAdminMenuChoice() {
-        int option = InputScanner.intPut("Enter your choice: ");
-        switch (option) {
-            case 1:
-                // Perform action for Delete User
-                // MÅSTE HITTA GET USERS FÖRST
-                adminApi.deleteUserAsAdmin(authApi.getJwtToken(),InputScanner.stringPut("Enter email of the user you want to delete: "));
-                break;
-            case 2:
-                // Perform action for Convert User to Admin
-                adminApi.promoteToAdmin(authApi.getJwtToken(), InputScanner.stringPut("Enter email of the user you want to promote to Admin: "));
-                break;
-            case 3:
-                // Perform action for Update Student
+        try {
+
+            int option = InputScanner.intPut("Enter your choice: ");
+            switch (option) {
+                case 1:
+                    // Perform action for Delete User
+                    // MÅSTE HITTA GET USERS FÖRST
+                    adminApi.deleteUserAsAdmin(authApi.getJwtToken(), InputScanner.stringPut("Enter email of the user you want to delete: "));
+                    break;
+                case 2:
+                    // Perform action for Convert User to Admin
+                    adminApi.promoteToAdmin(authApi.getJwtToken(), InputScanner.stringPut("Enter email of the user you want to promote to Admin: "));
+                    break;
+                case 3:
+                    // Perform action for Update Student
 //                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
 //                for (StudentDto studentDto : students) {
 //                    System.out.println(studentDto);
 //                }
-                printAllStudents(authApi.getJwtToken());
-                int id = InputScanner.intPut("Enter ID of the Student you want to update: ");
-                Gson updateStudent = new Gson();
+                    printAllStudents(authApi.getJwtToken());
+                    int id = InputScanner.intPut("Enter ID of the Student you want to update: ");
+                    Gson updateStudent = new Gson();
 
-                // Creating JSON object manually
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("name",InputScanner.stringPut("Enter updated student name: ") );
-                jsonObject.addProperty("age", InputScanner.intPut("Enter updated Student age: "));
-                jsonObject.addProperty("dept", InputScanner.stringPut("Enter updated student department: "));
-                String json = updateStudent.toJson(jsonObject);
+                    // Creating JSON object manually
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("name", InputScanner.stringPut("Enter updated student name: "));
+                    jsonObject.addProperty("age", InputScanner.intPut("Enter updated Student age: "));
+                    jsonObject.addProperty("dept", InputScanner.stringPut("Enter updated student department: "));
+                    String json = updateStudent.toJson(jsonObject);
 
-                studentApi.updateStudent(authApi.getJwtToken(), id , json);
-                break;
-            case 4:
-                // Perform action for Delete Student
-                printAllStudents(authApi.getJwtToken());
-                studentApi.deleteStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
-                break;
-            case 5:
-                // Perform action for Add Course
-                Gson addCourse = new Gson();
-                JsonObject jsonObject1 = new JsonObject();
-                jsonObject1.addProperty("title",InputScanner.stringPut("Enter course title: ") );
-                jsonObject1.addProperty("abbreviation", InputScanner.stringPut("Enter course abbreviation: "));
-                jsonObject1.addProperty("modules",InputScanner.stringPut("Enter course modules"));
-                jsonObject1.addProperty("fee",InputScanner.doublePut("Enter course fee: "));
-                String jsonCourse = addCourse.toJson(jsonObject1);
-                courseApi.addCourse(authApi.getJwtToken(), jsonCourse);
+                    studentApi.updateStudent(authApi.getJwtToken(), id, json);
+                    break;
+                case 4:
+                    // Perform action for Delete Student
+                    printAllStudents(authApi.getJwtToken());
+                    studentApi.deleteStudent(authApi.getJwtToken(), InputScanner.intPut("Enter student ID: "));
+                    break;
+                case 5:
+                    // Perform action for Add Course
+                    Gson addCourse = new Gson();
+                    JsonObject jsonObject1 = new JsonObject();
+                    jsonObject1.addProperty("title", InputScanner.stringPut("Enter course title: "));
+                    jsonObject1.addProperty("abbreviation", InputScanner.stringPut("Enter course abbreviation: "));
+                    jsonObject1.addProperty("modules", InputScanner.stringPut("Enter course modules"));
+                    jsonObject1.addProperty("fee", InputScanner.doublePut("Enter course fee: "));
+                    String jsonCourse = addCourse.toJson(jsonObject1);
+                    courseApi.addCourse(authApi.getJwtToken(), jsonCourse);
 
-                break;
-            case 6:
-                // Perform action for Update Course
+                    break;
+                case 6:
+                    // Perform action for Update Course
 //                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
 //                for (CourseDto courseDto : courses) {
 //                    System.out.println(courseDto);
 //                }
-                printAllCourses(authApi.getJwtToken());
-                int courseId = InputScanner.intPut("Enter ID of the Course you want to update: ");
-                // Creating JSON object manually
-                Gson gson = new Gson();
-                JsonObject courseObject = new JsonObject();
-                courseObject.addProperty("title",InputScanner.stringPut("Enter updated course title: ") );
-                courseObject.addProperty("abbreviation", InputScanner.stringPut("Enter updated Course abbreviation: "));
-                courseObject.addProperty("modules", InputScanner.intPut("Enter updated Course modules: "));
-                courseObject.addProperty("fee", InputScanner.doublePut("Enter updated Course fee: "));
-                String courseJson = gson.toJson(courseObject);
+                    printAllCourses(authApi.getJwtToken());
+                    int courseId = InputScanner.intPut("Enter ID of the Course you want to update: ");
+                    // Creating JSON object manually
+                    Gson gson = new Gson();
+                    JsonObject courseObject = new JsonObject();
+                    courseObject.addProperty("title", InputScanner.stringPut("Enter updated course title: "));
+                    courseObject.addProperty("abbreviation", InputScanner.stringPut("Enter updated Course abbreviation: "));
+                    courseObject.addProperty("modules", InputScanner.intPut("Enter updated Course modules: "));
+                    courseObject.addProperty("fee", InputScanner.doublePut("Enter updated Course fee: "));
+                    String courseJson = gson.toJson(courseObject);
 
-                courseApi.updateCourse(authApi.getJwtToken(), courseId , courseJson);
-                break;
-            case 7:
-                // Perform action for Delete Course;
-                printAllCourses(authApi.getJwtToken());
-                courseApi.deleteCourse(authApi.getJwtToken(), InputScanner.intPut("Enter course ID: "));
-                break;
-            case 0:
-                System.out.println("Exiting program.");
-                break;
-            default:
-                System.out.println("Invalid choice.");
-                break;
+                    courseApi.updateCourse(authApi.getJwtToken(), courseId, courseJson);
+                    break;
+                case 7:
+                    // Perform action for Delete Course;
+                    printAllCourses(authApi.getJwtToken());
+                    courseApi.deleteCourse(authApi.getJwtToken(), InputScanner.intPut("Enter course ID: "));
+                    break;
+                case 0:
+                    System.out.println("Exiting program.");
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
 
     private static void handleUserMenuChoice() {
-        int option = InputScanner.intPut("Enter your choice: ");
-        switch (option) {
-            case 1:
-                // Perform action for Update User
-                break;
-            case 2:
-                // Perform action for Change Password
-                break;
-            case 3:
-                // Perform action for Add Student
-                Gson student = new Gson();
-                System.out.println("Add new Student");
-                JsonObject studentJson = new JsonObject();
-                studentJson.addProperty("name", InputScanner.stringPut("Enter student name: "));
-                studentJson.addProperty("age", InputScanner.intPut("Enter student age: "));
-                studentJson.addProperty("dept", InputScanner.stringPut("Enter student department: "));
-                String studentJ = student.toJson(studentJson);
-                studentApi.addStudent(authApi.getJwtToken(), studentJ);
-                break;
-            case 4:
-                // Perform action for Assign Course to Student
-                System.out.println("Which student do you want to assign a course to?");
+        try {
+            int option = InputScanner.intPut("Enter your choice: ");
+            switch (option) {
+                case 1:
+                    // Perform action for Update User
+                    break;
+                case 2:
+                    // Perform action for Change Password
+                    break;
+                case 3:
+                    // Perform action for Add Student
+                    Gson student = new Gson();
+                    System.out.println("Add new Student");
+                    JsonObject studentJson = new JsonObject();
+                    studentJson.addProperty("name", InputScanner.stringPut("Enter student name: "));
+                    studentJson.addProperty("age", InputScanner.intPut("Enter student age: "));
+                    studentJson.addProperty("dept", InputScanner.stringPut("Enter student department: "));
+                    String studentJ = student.toJson(studentJson);
+                    studentApi.addStudent(authApi.getJwtToken(), studentJ);
+                    break;
+                case 4:
+                    // Perform action for Assign Course to Student
+                    System.out.println("Which student do you want to assign a course to?");
 //                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
 //                for (StudentDto studentDto : students) {
 //                    System.out.println(studentDto);
 //                }
-                printAllStudents(authApi.getJwtToken());
-                long studentId = InputScanner.intPut("Enter student ID: ");
-                System.out.println("Which course do you want to assign to the student?");
+                    printAllStudents(authApi.getJwtToken());
+                    long studentId = InputScanner.intPut("Enter student ID: ");
+                    System.out.println("Which course do you want to assign to the student?");
 //                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
 //                for (CourseDto courseDto : courses) {
 //                    System.out.println(courseDto);
 //                }
-                printAllCourses(authApi.getJwtToken());
-                long courseId = InputScanner.intPut("Enter course ID: ");
-                studentApi.assignCourseToStudent(authApi.getJwtToken(), studentId, courseId);
-                break;
-            case 0:
-                System.out.println("Exiting program.");
-                break;
-            default:
-                System.out.println("Invalid choice.");
-                break;
+                    printAllCourses(authApi.getJwtToken());
+                    long courseId = InputScanner.intPut("Enter course ID: ");
+                    studentApi.assignCourseToStudent(authApi.getJwtToken(), studentId, courseId);
+                    break;
+                case 0:
+                    System.out.println("Exiting program.");
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

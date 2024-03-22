@@ -21,6 +21,7 @@ public class Menu {
         System.out.println("1. Public Access Menu");
         System.out.println("2. Admin Access Menu");
         System.out.println("3. User Access Menu");
+        System.out.println("0. Exit program!");
     }
     private static void PublicAccessMenu() {
         System.out.println("Welcome to Public Access Menu:");
