@@ -12,7 +12,7 @@ import com.jromeo.utils.Menu;
 import java.util.List;
 
 public class Main {
-
+    static UserApi userApi = new UserApi();
     static HttpHelper httpHelper = new HttpHelper();
     static AdminApi adminApi = new AdminApi(httpHelper);
     static CourseApi courseApi = new CourseApi(httpHelper);
@@ -43,6 +43,8 @@ public class Main {
      * Metoder som ej provats = 4
      */
 
+    static boolean isLoggedIn = false; // Initialize isLoggedIn as false initially
+
     public static void main(String[] args) {
         // Welcome message
         System.out.println("Hello! Welcome to the program.");
@@ -58,18 +60,21 @@ public class Main {
             } else if (choice.equals("no")) {
                 Menu.DisplayPublicMenu();
                 handlePublicMenuChoice();
+                // Break out of the loop if the user chooses not to login/register
+                break;
             } else {
                 System.out.println("Invalid choice.");
                 continue; // Restart the loop to prompt the user again
             }
 
-            // Once login/register is done, enter the main menu loop
-            MainMenu();
-
-            // Break out of the loop if the user chooses to exit the program
-            break;
+            // Once login/register is done, enter the main menu loop only if logged in
+            if (isLoggedIn) {
+                MainMenu();
+                break;
+            }
         }
     }
+
 
 
     public static void MainMenu() {
@@ -124,16 +129,16 @@ public class Main {
     }
 
     private static void handleLogin(AuthDto loginCredentials) {
-        boolean loggedIn = authApi.login(loginCredentials);
-        if (loggedIn) {
+        isLoggedIn = authApi.login(loginCredentials); // Update isLoggedIn based on login result
+        if (isLoggedIn) {
             MainMenu();
         }
     }
 
     private static void handleRegister(AuthDto loginCredentials) {
         authApi.register(loginCredentials);
-        boolean loggedIn = authApi.login(loginCredentials);
-        if (loggedIn) {
+        isLoggedIn = authApi.login(loginCredentials); // Update isLoggedIn based on login result
+        if (isLoggedIn) {
             MainMenu();
         }
     }
@@ -211,10 +216,7 @@ public class Main {
                     break;
                 case 3:
                     // Perform action for Update Student
-//                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
-//                for (StudentDto studentDto : students) {
-//                    System.out.println(studentDto);
-//                }
+//
                     printAllStudents(authApi.getJwtToken());
                     int id = InputScanner.intPut("Enter ID of the Student you want to update: ");
                     Gson updateStudent = new Gson();
@@ -246,11 +248,7 @@ public class Main {
 
                     break;
                 case 6:
-                    // Perform action for Update Course
-//                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
-//                for (CourseDto courseDto : courses) {
-//                    System.out.println(courseDto);
-//                }
+
                     printAllCourses(authApi.getJwtToken());
                     int courseId = InputScanner.intPut("Enter ID of the Course you want to update: ");
                     // Creating JSON object manually
@@ -288,9 +286,24 @@ public class Main {
             switch (option) {
                 case 1:
                     // Perform action for Update User
+                    Gson userUpdate = new Gson();
+                    JsonObject jsonUser = new JsonObject();
+                    jsonUser.addProperty("firstname", InputScanner.stringPut("Enter user name: "));
+                    jsonUser.addProperty("lastname",InputScanner.stringPut("Enter user lastname: "));
+                    jsonUser.addProperty("email", InputScanner.stringPut("Enter user email: "));
+                    jsonUser.addProperty("password", InputScanner.stringPut("Enter password: "));
+                    String NewJsonUser = userUpdate.toJson(jsonUser);
+                    userApi.updateUser(authApi.getJwtToken(), InputScanner.stringPut("Enter email: "), NewJsonUser);
                     break;
                 case 2:
-                    // Perform action for Change Password
+                    Gson jsonUserPasswordUpdate = new Gson();
+                    JsonObject changeUserPasswordJson = new JsonObject();
+                    changeUserPasswordJson.addProperty("currentPassword", InputScanner.stringPut("Enter user name: "));
+                    changeUserPasswordJson.addProperty("newPassword",InputScanner.stringPut("Enter user lastname: "));
+                    changeUserPasswordJson.addProperty("confirmationPassword", InputScanner.stringPut("Enter user email: "));
+
+                    String NewJsonUserPassword = jsonUserPasswordUpdate.toJson(changeUserPasswordJson);
+                    userApi.changePassword(authApi.getJwtToken(), NewJsonUserPassword);
                     break;
                 case 3:
                     // Perform action for Add Student
@@ -304,19 +317,10 @@ public class Main {
                     studentApi.addStudent(authApi.getJwtToken(), studentJ);
                     break;
                 case 4:
-                    // Perform action for Assign Course to Student
                     System.out.println("Which student do you want to assign a course to?");
-//                List<StudentDto> students = adminApi.getAllStudents(authApi.getJwtToken());
-//                for (StudentDto studentDto : students) {
-//                    System.out.println(studentDto);
-//                }
                     printAllStudents(authApi.getJwtToken());
                     long studentId = InputScanner.intPut("Enter student ID: ");
                     System.out.println("Which course do you want to assign to the student?");
-//                List<CourseDto> courses = courseApi.getAllCourses(authApi.getJwtToken());
-//                for (CourseDto courseDto : courses) {
-//                    System.out.println(courseDto);
-//                }
                     printAllCourses(authApi.getJwtToken());
                     long courseId = InputScanner.intPut("Enter course ID: ");
                     studentApi.assignCourseToStudent(authApi.getJwtToken(), studentId, courseId);
