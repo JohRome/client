@@ -79,5 +79,7 @@ will have to turn over the project to another group.
 * [junit_jupiter_engine](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine)
 * [mockito-core](https://mvnrepository.com/artifact/org.mockito/mockito-core)
 
+## Tests
++ Go to the test folder and chose the class you want to test
 
 ## License
