@@ -83,3 +83,4 @@ will have to turn over the project to another group.
 + Go to the test folder and chose the class you want to test
 
 ## License
++ [MIT](LICENSE)

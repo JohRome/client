@@ -22,14 +22,11 @@ public class Main {
 
     public static void main(String[] args) {
         /**
+         * OBS! - VIKTIGT MARCUS!
          *
-         *
-         *
-         *
-         * VIKTIGT MARCUS!
          * fördefinierad admin -> "email": "admin@mail.com", "password": "54321"
          *
-         *
+         * OBS! - VIKTIGT MARCUS!
          *
          *
          */
