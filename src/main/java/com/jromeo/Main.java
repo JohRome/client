@@ -18,34 +18,21 @@ public class Main {
     static CourseApi courseApi = new CourseApi(httpHelper);
     static StudentApi studentApi = new StudentApi(httpHelper);
     static AuthApi authApi = new AuthApi();
-
-    /**
-     * RörigAB Dokumentation - Metoder vi har som fungerar
-     * Register User - Funkar
-     * Login again and update the token - funkar
-     * Get student details - funkar
-     * Get all students - funkar
-     * Get course by ID - funkar
-     * Get all courses - funkar
-     * Delete User - ej provat
-     * Convert User to Admin - måste ha url.
-     * Update Student - funkar
-     * Delete Student - funkar
-     * Add Course - funkar
-     * Update Course - funkar
-     * Delete Course - funkar men kan inte ta bort om det finns kopplade studenter
-     * Update User - - måste ha url
-     * Change Password - måste ha url
-     * Add Student - funkar
-     * Assign Course to Student - funkar
-     * <p>
-     * Metoder som fungerar = 11
-     * Metoder som ej provats = 4
-     */
-
     static boolean isLoggedIn = false; // Initialize isLoggedIn as false initially
 
     public static void main(String[] args) {
+        /**
+         *
+         *
+         *
+         *
+         * VIKTIGT MARCUS!
+         * fördefinierad admin -> "email": "admin@mail.com", "password": "54321"
+         *
+         *
+         *
+         *
+         */
         // Welcome message
         System.out.println("Hello! Welcome to the program.");
 
