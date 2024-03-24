@@ -30,7 +30,7 @@ public class CourseApi {
     }
     // Add Course
     public void addCourse(String token, String json) {
-        HttpResponse<String> response = httpHelper.sendPostRequest("/courses/save/", json, token);
+        HttpResponse<String> response = httpHelper.sendPostRequest("/course/save", json, token);
         boolean isSuccess = response.statusCode() > 199 || response.statusCode() < 300;
         if (!isSuccess) {
             throw new RuntimeException("Failed : HTTP error code : " + response.statusCode());

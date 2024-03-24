@@ -76,7 +76,6 @@ public class Main {
     }
 
 
-
     public static void MainMenu() {
         while (true) {
             Menu.MainMenu();
@@ -216,7 +215,6 @@ public class Main {
                     break;
                 case 3:
                     // Perform action for Update Student
-//
                     printAllStudents(authApi.getJwtToken());
                     int id = InputScanner.intPut("Enter ID of the Student you want to update: ");
                     Gson updateStudent = new Gson();
@@ -289,7 +287,7 @@ public class Main {
                     Gson userUpdate = new Gson();
                     JsonObject jsonUser = new JsonObject();
                     jsonUser.addProperty("firstname", InputScanner.stringPut("Enter user name: "));
-                    jsonUser.addProperty("lastname",InputScanner.stringPut("Enter user lastname: "));
+                    jsonUser.addProperty("lastname", InputScanner.stringPut("Enter user lastname: "));
                     jsonUser.addProperty("email", InputScanner.stringPut("Enter user email: "));
                     jsonUser.addProperty("password", InputScanner.stringPut("Enter password: "));
                     String NewJsonUser = userUpdate.toJson(jsonUser);
@@ -299,7 +297,7 @@ public class Main {
                     Gson jsonUserPasswordUpdate = new Gson();
                     JsonObject changeUserPasswordJson = new JsonObject();
                     changeUserPasswordJson.addProperty("currentPassword", InputScanner.stringPut("Enter user name: "));
-                    changeUserPasswordJson.addProperty("newPassword",InputScanner.stringPut("Enter user lastname: "));
+                    changeUserPasswordJson.addProperty("newPassword", InputScanner.stringPut("Enter user lastname: "));
                     changeUserPasswordJson.addProperty("confirmationPassword", InputScanner.stringPut("Enter user email: "));
 
                     String NewJsonUserPassword = jsonUserPasswordUpdate.toJson(changeUserPasswordJson);

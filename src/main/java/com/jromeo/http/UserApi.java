@@ -10,12 +10,6 @@ public class UserApi {
         this.httpHelper = new HttpHelper();
     }
 
-
-
-
-    // Promote to admin
-
-    // Update user - UserDto needed for json
     public void updateUser(String token, String userEmail, String json) {
         HttpResponse<String> putResponse = httpHelper.sendPutRequest("/users/update/" + userEmail, json, token);
         if (putResponse.statusCode() != 200) {
@@ -23,7 +17,6 @@ public class UserApi {
         }
     }
 
-    // Change user password - PasswordDto needed for json
     public void changePassword(String token, String json) {
         HttpResponse<String> putResponse = httpHelper.sendPutRequest("/users", json, token);
         if (putResponse.statusCode() != 200) {
