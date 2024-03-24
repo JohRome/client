@@ -30,23 +30,31 @@ public class AuthApi {
                     .build();
 
             HttpResponse<String> response = client.send(post, HttpResponse.BodyHandlers.ofString());
-            TokenDto jwtToken = gson.fromJson(response.body(), TokenDto.class);
-            this.jwtToken = jwtToken.getAccess_token();
-            if (response.statusCode() == 200) {
-                return true;
-            }
+
+            // Check response status code
             if (response.statusCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : " + response.statusCode());
-
+                System.out.println("Failed to login. HTTP error code: " + response.statusCode());
+                return false;
             }
 
+            // Check response body for valid token
+            TokenDto jwtToken = gson.fromJson(response.body(), TokenDto.class);
+            if (jwtToken == null || jwtToken.getAccess_token() == null) {
+                System.out.println("Failed to parse token from response.");
+                return false;
+            }
+
+            this.jwtToken = jwtToken.getAccess_token();
+            return true;
 
         } catch (Exception e) {
-            System.out.println("Error when logging in");
-
+            System.out.println("Error when logging in: " + e.getMessage());
+            return false;
         }
-        return false;
     }
+
+
+
 
 
     // FUNKAR

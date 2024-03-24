@@ -9,7 +9,8 @@ import java.net.http.HttpResponse;
 
 public class HttpHelper {
 
-    private String baseUrl = "http://school-mangement.eu-north-1.elasticbeanstalk.com:8080";
+
+    private String baseUrl = "http://school-mangement.eu-north-1.elasticbeanstalk.com:8080/api/v1";
     @Getter
     private HttpClient httpClient;
 
